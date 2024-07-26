@@ -1,0 +1,11 @@
+#DFLOAD='(your download folder)'
+#HDPATH='(your hard disk path)'
+
+cd $DFLOAD
+mkdir out
+mkdir out/boot
+
+nasm -I boot/ -o out/boot/mbr.bin boot/mbr.S
+nasm -I boot/ -o out/boot/loader.bin boot/loader.S
+dd if=out/boot/mbr.bin of=$HDPATH bs=512 count=1 conv=notrunc
+dd if=out/boot/loader.bin of=$HDPATH bs=512 count=1 seek=2 conv=notrunc
