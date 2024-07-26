@@ -44,17 +44,20 @@ or eax,0x01
 mov cr0,eax
 
 mov dword [SCREEN_DATA],iamodeopen
-mov word [SCREEN_SIZE],0x0034
+mov word [SCREEN_SIZE],0x0032
 mov dword [SCREEN_DEST],0x00000460
 mov byte [SCREEN_COLOR],0x02
-call gdtscreen
+mov eax,0x08
+mov es,eax
+call writememory
 
 jmp $
 
 loaderready db "[SUCCESS][LOADER] The loader is ready."
 gdtready db "[SUCCESS][LOADER] The GDT is ready."
 apinready db "[SUCCESS][LOADER] The A20 was successfully opened."
-iamodeopen db "[SUCCESS][LOADER] The IA-32 (32bin) mode was opened."
+memoryready db "[SUCCESS][LOADER] The memory reading is complete."
+iamodeopen db "[SUCCESS][LOADER] Enter IA-32(32bin/protect) mode."
 
 GDTR_ADDRESS dw GDT_SIZE
 dd GDT_ADDRESS
@@ -64,6 +67,7 @@ SCREEN_DATA dd 0x00
 SCREEN_COLOR db 0x00
 SCREEN_SIZE dw 0x00
 SCREEN_DEST dd 0x00
+MEMORY_SIZE dd 0x00
 
 writegdt:
 mov ecx,[GDT_PTR]
@@ -73,21 +77,19 @@ add cx,0x04
 mov [GDT_PTR],ecx
 ret
 
-gdtscreen:
+writememory:
 mov ecx,[SCREEN_DATA]
 mov eax,[SCREEN_DEST]
 mov dl,[ecx]
 add ecx,0x01
 mov [SCREEN_DATA],ecx
 mov dh,[SCREEN_COLOR]
-mov ecx,0x08
-mov gs,ecx
-mov word [gs:eax],dx
+mov word [es:eax],dx
 add eax,0x02
 mov [SCREEN_DEST],eax
 mov ax,[SCREEN_SIZE]
 sub ax,0x01
 mov [SCREEN_SIZE],ax
 cmp ax,0x00
-jne gdtscreen
+jne writememory
 ret
