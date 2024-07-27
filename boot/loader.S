@@ -66,6 +66,8 @@ call writememory
 
 jmp $
 
+mov dword [GDT_ADDRESS+0x14],INT_ADDRESS2-0x0200
+
 loaderready db "[SUCCESS][LOADER] The loader is ready."
 gdtready db "[SUCCESS][LOADER] The GDT is ready."
 apinready db "[SUCCESS][LOADER] The A20 was successfully opened."
