@@ -1,4 +1,4 @@
-%include "boot.inc"
+%include "system.inc"
 org 0x7c00
 
 mov ax,cs

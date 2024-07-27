@@ -1,4 +1,4 @@
-%include "boot.inc"
+%include "system.inc"
 org LOADER_ADDRESS
 
 mov bx,0x02
@@ -9,13 +9,27 @@ mov cx,0x26
 mov dx,0x0400
 int 0x10
 
+mov word [GDTR_ADDRESS],GDT_SIZE
+mov dword [GDTR_ADDRESS+0x02],GDT_ADDRESS
 mov dword [GDT_PTR],GDT_ADDRESS
-mov dword [GDT_DATA],0x00000000
+mov dword [DWORD_DATA1],0x00000000
 call writegdt
 call writegdt
-mov dword [GDT_DATA],0x8000ffff
+mov dword [DWORD_DATA1],0x80007fff
 call writegdt
-mov dword [GDT_DATA],0x0040920b
+mov dword [DWORD_DATA1],0x0040920b
+call writegdt
+mov dword [DWORD_DATA1],INT_ADDRESS1
+call writegdt
+mov dword [DWORD_DATA1],INT_ADDRESS2
+call writegdt
+mov dword [DWORD_DATA1],INT_CODE1
+call writegdt
+mov dword [DWORD_DATA1],INT_CODE2
+call writegdt
+mov dword [DWORD_DATA1],SYS_PARAMETER1
+call writegdt
+mov dword [DWORD_DATA1],SYS_PARAMETER2
 call writegdt
 lgdt [GDTR_ADDRESS]
 
@@ -43,12 +57,11 @@ mov eax,cr0
 or eax,0x01
 mov cr0,eax
 
-mov dword [SCREEN_DATA],iamodeopen
-mov word [SCREEN_SIZE],0x0032
-mov dword [SCREEN_DEST],0x00000460
-mov byte [SCREEN_COLOR],0x02
-mov eax,0x08
-mov es,eax
+mov dword [DWORD_DATA1],iamodeopen
+mov word [WORD_DATA1],0x0032
+mov dword [DWORD_DATA2],0x00000460
+mov byte [BYTE_DATA1],0x02
+mov word [SECTION_NUMBER1],0x0008
 call writememory
 
 jmp $
@@ -59,37 +72,29 @@ apinready db "[SUCCESS][LOADER] The A20 was successfully opened."
 memoryready db "[SUCCESS][LOADER] The memory reading is complete."
 iamodeopen db "[SUCCESS][LOADER] Enter IA-32(32bin/protect) mode."
 
-GDTR_ADDRESS dw GDT_SIZE
-dd GDT_ADDRESS
-GDT_PTR dd 0x00
-GDT_DATA dd 0x00
-SCREEN_DATA dd 0x00
-SCREEN_COLOR db 0x00
-SCREEN_SIZE dw 0x00
-SCREEN_DEST dd 0x00
-MEMORY_SIZE dd 0x00
-
 writegdt:
 mov ecx,[GDT_PTR]
-mov eax,[GDT_DATA]
+mov eax,[DWORD_DATA1]
 mov dword [ecx],eax
 add cx,0x04
 mov [GDT_PTR],ecx
 ret
 
 writememory:
-mov ecx,[SCREEN_DATA]
-mov eax,[SCREEN_DEST]
+mov eax,[SECTION_NUMBER1]
+mov es,eax
+mov ecx,[DWORD_DATA1]
+mov eax,[DWORD_DATA2]
 mov dl,[ecx]
 add ecx,0x01
-mov [SCREEN_DATA],ecx
-mov dh,[SCREEN_COLOR]
+mov [DWORD_DATA1],ecx
+mov dh,[BYTE_DATA1]
 mov word [es:eax],dx
 add eax,0x02
-mov [SCREEN_DEST],eax
-mov ax,[SCREEN_SIZE]
+mov [DWORD_DATA2],eax
+mov ax,[WORD_DATA1]
 sub ax,0x01
-mov [SCREEN_SIZE],ax
+mov [WORD_DATA1],ax
 cmp ax,0x00
 jne writememory
 ret
