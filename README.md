@@ -29,16 +29,18 @@
 
 #### Other links
 
-[Learn to use this operating system](/document/LEARN.md)
+  - [Learn to use this operating system](/document/LEARN.md)
 
-[Code explanation of this operating system](/document/ANALYSE.md)
+  - [Code explanation of this operating system](/document/ANALYSE.md)
 
-[Contact us](mailto:glstudio24@outlook.com)
+  - [Contact us](mailto:glstudio24@outlook.com)
 
 #### End
 
 >Due to the editor's English proficiency, it is inevitable that some words are used imporperly, spelling errors or grammar errors. If you find it, please let us know. Thank you.
 
 By Rangeset 😫
+
+## 中文（简体）
 
 Copyright © 2024 Rangeset
