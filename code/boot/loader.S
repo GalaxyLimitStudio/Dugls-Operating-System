@@ -61,8 +61,7 @@ mov dword [DWORD_DATA1],iamodeopen
 mov word [WORD_DATA1],0x0032
 mov dword [DWORD_DATA2],0x00000460
 mov byte [BYTE_DATA1],0x02
-mov word [SECTION_NUMBER1],0x0008
-call writememory
+call writescreen
 
 jmp $
 
@@ -82,8 +81,8 @@ add cx,0x04
 mov [GDT_PTR],ecx
 ret
 
-writememory:
-mov eax,[SECTION_NUMBER1]
+writescreen:
+mov eax,0x08
 mov es,eax
 mov ecx,[DWORD_DATA1]
 mov eax,[DWORD_DATA2]
@@ -100,5 +99,8 @@ mov [WORD_DATA1],ax
 cmp ax,0x00
 jne writememory
 ret
+
+movememory:
+mov 
 
 endtag:
